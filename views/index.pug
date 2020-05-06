@@ -1,0 +1,60 @@
+doctype html
+html
+    head
+        title Chat Application by Team 3
+        link(rel="stylesheet", href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css")
+        link(rel='stylesheet', type="text/css" href='main.css')
+        script(src='https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js')
+        script(src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js')
+    body
+        .container-fluid
+            nav.navbar.navbar-expand-sm.d-flex.justify-content-center
+                h1 Realtime Chat Application
+            content.mt-2
+                #signUp
+                    input#txtUser.form-group(type='text' placeholder='Username')
+                    button#btnSignUp.btn.btn-success(type='submit') Sign Up
+                .row.justify-content-center
+                    .col-3
+                        p#h3 Online Users
+                    .col-6
+                    .w-100
+                    .col-3
+                        #userList
+                    .col-6
+                        #msgList
+                        .form-group.d-flex
+                            input#txtMessage.form-control(type="text" name='msg')
+                            button#btnChat.btn.btn-primary(type='submit') Send      
+    script.
+            const socket = io("http://localhost:3000");
+            socket.on("server_send_message", (data) => {
+                var name = "<span class='name'>" + data.Username + "</span>";
+                var msg =  "<span class='msg'>" + data.msg + "</span>";
+                $("#msgList").append(name +"<br>" + msg + "<div class='block'></div>");
+            });
+
+            socket.on("server-send-failure-signup", (data) => {
+                alert("User " + data + " is not available!");
+            });
+
+            socket.on("Register-success", function(data){
+                $("#signUp").hide(500);
+            })
+
+            socket.on("server-send-success-signup", (data) => {
+                $("#userList").html("");
+                data.forEach(function(i){
+                $("#userList").append("<div class='user'>" + i + "</div>");
+                });
+            });
+
+            $(document).ready(function(){
+                $("#btnSignUp").click(() => {
+                    socket.emit("client_send_username", $("#txtUser").val());
+                });
+                $("#btnChat").click(() =>{
+                    socket.emit("client_send_message", $("#txtMessage").val());
+                    $("#txtMessage").val("");
+                });
+            });      
