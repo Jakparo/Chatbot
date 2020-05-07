@@ -18,20 +18,23 @@ app.get("/", (req, res) => {
 
 let onlineUsers = [];
 
+// server listen connection
 io.on("connection", (socket) => {
     console.log('A new connection with id:',socket.id);
     socket.on("client_send_username", (data) => {
         console.log(`${socket.id} sign up username: ${data}`);
-        if( onlineUsers.indexOf(data) >= 0) {
+        users = onlineUsers.map(x => x.name)
+        if( users.indexOf(data) >= 0) {
             socket.emit("server-send-failure-signup", data);
             console.log('Sign up fail')
           } else {
-            onlineUsers.push(data);
+            onlineUsers.push({name: data, id: socket.id});
             socket.Username = data;
             socket.emit("Register-success", data);
             io.sockets.emit("server-send-success-signup", onlineUsers);
           }
     });
+    // when users disconnect website -> remove their username
     socket.on("disconnect", () => {
         console.log(`${socket.id} is disconnected`);
         let u = onlineUsers.indexOf(socket.Username);
@@ -39,7 +42,26 @@ io.on("connection", (socket) => {
         socket.emit(("server-send-success-signup", onlineUsers));
     });
 
+    // client send message to 
     socket.on("client_send_message", (data) =>{
         io.sockets.emit("server_send_message", {Username:socket.Username, msg:data});
     });
+
+    // client send private message
+    socket.on('msg', (data)=>{
+        let users = onlineUsers.map(x=> x.name)
+        if(users.indexOf(data.to) >= 0) {
+            let matchedUser = onlineUsers.find(x => {
+                if (x.name == data.to){
+                    return x;
+                }
+            })
+            socket.emit('send-private-success', {Username:socket.Username, msg:data.msg, rec: data.to});
+            socket.to(matchedUser.id).emit('private', {Username:socket.Username, msg:data.msg});
+        } else {
+            socket.emit("server-send-failure-private", data.to);
+        }
+    })
+    
 });
+
