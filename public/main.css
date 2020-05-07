@@ -9,7 +9,7 @@
 #msgList {
     background: rgba(44, 45, 45, 0.76);
     color: #FFFFFF;  
-    overflow: hidden;
+    overflow: auto;
     height: 65vh;
     font-size: larger;
     -webkit-border-radius: 20px 10px 10px 0px;
