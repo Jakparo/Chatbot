@@ -32,7 +32,7 @@ html
                             input#txtMessage.form-control(type="text" name='msg')
                             button#btnChat.btn.btn-primary(type='submit') Send      
     script.
-            const socket = io("http://localhost:3000");
+            const socket = io("https://realtime-chat-application-fpt.herokuapp.com/");
             socket.on("server_send_message", (data) => {
                 var name = "<span class='name'>" + data.Username + "</span>";
                 var msg =  "<span class='msg'>" + data.msg + "</span>";
