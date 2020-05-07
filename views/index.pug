@@ -1,6 +1,7 @@
 doctype html
 html
     head
+        meta(name="viewport",content="width=device-width, initial-scale=1.0")
         title Chat Application by Team 3
         link(rel="stylesheet", href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css")
         link(rel='stylesheet', type="text/css" href='main.css')
@@ -11,13 +12,17 @@ html
             nav.navbar.navbar-expand-sm.d-flex.justify-content-center
                 h1 Realtime Chat Application
             content.mt-2
-                #signUp
-                    input#txtUser.form-group(type='text' placeholder='Username')
+                #signUp.inline.form-group
+                    input.btn.btn-light#txtUser(type='text' placeholder='Username')
                     button#btnSignUp.btn.btn-success(type='submit') Sign Up
                 .row.justify-content-center
                     .col-3
                         p#h3 Online Users
                     .col-6
+                        .inline.form-group#private
+                            input.btn.btn-outline-light#to(type="text" placeholder="Input username")
+                            input.btn.btn-outline-light#message(type="text" placeholder="Input message")
+                            button.btn.btn-danger#btn-pri(type="submit") Private chat
                     .w-100
                     .col-3
                         #userList
@@ -34,21 +39,43 @@ html
                 $("#msgList").append(name +"<br>" + msg + "<div class='block'></div>");
             });
 
+            // fail signup username
             socket.on("server-send-failure-signup", (data) => {
                 alert("User " + data + " is not available!");
             });
 
+            //Auto hide sign up bar 
             socket.on("Register-success", function(data){
                 $("#signUp").hide(500);
             })
-
+            
+            // success signup
             socket.on("server-send-success-signup", (data) => {
                 $("#userList").html("");
                 data.forEach(function(i){
-                $("#userList").append("<div class='user'>" + i + "</div>");
+                $("#userList").append("<div class='user'>" + i.name + "</div>");
                 });
             });
 
+            // server response failure private message
+            socket.on("server-send-failure-private", (data) => {
+                alert("User " + data + " is not available!");
+            });
+
+            // receive private message 
+            socket.on("private", (data) => {
+                var name = "<span class='name'>"+"From "+ data.Username +" to me "+"<span class='namePrivate'>"+" (Privately)"+"</span>"+"</span>";
+                var msg =  "<span class='msg'>" + data.msg + "</span>";
+                $("#msgList").append(name +"<br>" + msg + "<div class='block'></div>");
+            });
+
+            // display private message that you sent to other user
+            socket.on("send-private-success", (data) => {
+                var name = "<span class='name'>"+"From me to "+ data.rec +"<span class='namePrivate'>"+" (Privately)"+"</span>"+"</span>";
+                var msg =  "<span class='msg'>" + data.msg + "</span>";
+                $("#msgList").append(name +"<br>" + msg + "<div class='block'></div>");
+            });
+            
             $(document).ready(function(){
                 $("#btnSignUp").click(() => {
                     socket.emit("client_send_username", $("#txtUser").val());
@@ -56,5 +83,9 @@ html
                 $("#btnChat").click(() =>{
                     socket.emit("client_send_message", $("#txtMessage").val());
                     $("#txtMessage").val("");
+                });
+                $("#btn-pri").click(()=> {
+                   socket.emit("msg",{to:$("#to").val(), msg:$("#message").val()});
+                   $("#message").val("");
                 });
             });      
