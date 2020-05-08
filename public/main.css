@@ -1,10 +1,20 @@
  body {
     font-family: Helvetica, Arial, sans-serif;
-    background: -webkit-linear-gradient(to left, #FFFFFF, #6DD5FA, #2980B9);  /* Chrome 10-25, Safari 5.1-6 */
-    background: linear-gradient(to left, #FFFFFF, #6DD5FA, #2980B9); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    background: -webkit-linear-gradient(to left, #FFFFFF, #6DD5FA, #2980B9);
+    background: linear-gradient(to left, #FFFFFF, #6DD5FA, #2980B9); 
+}
+.self{
+    margin-right: 1rem;
 }
 .msg {
+    color: black;
     margin-left: 3rem;
+    align-self: center;
+    padding: 0.2rem 1rem;
+    background-color: rgba(9, 170, 211, 0.836);
+    border-radius: 47px 47px 47px 47px;
+    -moz-border-radius: 47px 47px 47px 47px;
+    -webkit-border-radius: 47px 47px 47px 47px;
 }
 #msgList {
     background: rgba(44, 45, 45, 0.76);
@@ -15,6 +25,7 @@
     -webkit-border-radius: 20px 10px 10px 0px;
     -moz-border-radius: 20px 10px 10px 0px;
     border-radius: 20px 10px 10px 0px;
+    border: 2px solid black;
     font-size: 1.2rem;
 }
 #h3 {
@@ -35,9 +46,11 @@
     -webkit-border-radius: 20px 10px 10px 0px;
     -moz-border-radius: 20px 10px 10px 0px;
     border-radius: 20px 10px 10px 0px;
+    border: 1px solid black;  
 }
 
 .name {
+    font-size: 1.4rem;
     color: rgba(34, 210, 24, 0.83);
     font-weight: bold;
     margin-left: 1rem;

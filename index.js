@@ -27,12 +27,12 @@ io.on("connection", (socket) => {
         if( users.indexOf(data) >= 0) {
             socket.emit("server-send-failure-signup", data);
             console.log('Sign up fail')
-          } else {
+        } else {
             onlineUsers.push({name: data, id: socket.id});
             socket.Username = data;
             socket.emit("Register-success", data);
             io.sockets.emit("server-send-success-signup", onlineUsers);
-          }
+        }
     });
     // when users disconnect website -> remove their username
     socket.on("disconnect", () => {
@@ -49,7 +49,7 @@ io.on("connection", (socket) => {
 
     // client send private message
     socket.on('msg', (data)=>{
-        let users = onlineUsers.map(x=> x.name)
+        let users = onlineUsers.map(x=> x.name);
         if(users.indexOf(data.to) >= 0) {
             let matchedUser = onlineUsers.find(x => {
                 if (x.name == data.to){
@@ -62,6 +62,5 @@ io.on("connection", (socket) => {
             socket.emit("server-send-failure-private", data.to);
         }
     })
-    
 });
 
