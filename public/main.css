@@ -87,4 +87,5 @@ body {
 .right {
     float: right !important;
     margin-right: 1rem !important;
+    background-color: rgba(7, 255, 7, 0.822) !important;
 }
