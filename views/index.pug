@@ -5,6 +5,7 @@ html
         title Chat Application by Team 3
         link(rel="stylesheet", href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css")
         link(rel='stylesheet', type="text/css" href='main.css')
+        link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css")
         script(src='https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js')
         script(src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js')
     body
@@ -19,73 +20,68 @@ html
                     .col-3
                         p#h3 Online Users
                     .col-6
-                        .inline.form-group#private
-                            input.btn.btn-outline-light#to(type="text" placeholder="Input username")
-                            input.btn.btn-outline-light#message(type="text" placeholder="Input message")
-                            button.btn.btn-danger#btn-pri(type="submit") Private chat
                     .w-100
                     .col-3
                         #userList
                     .col-6
                         #msgList
                         .form-group.d-flex
+                            select#to
                             input#txtMessage.form-control(type="text" name='msg')
-                            button#btnChat.btn.btn-primary(type='submit') Send      
+                            button#btnChat.btn.btn-primary(type='submit')
+                                i.fas.fa-paper-plane 
     script.
-            const socket = io("https://realtime-chat-application-fpt.herokuapp.com/");
-            socket.on("server_send_message", (data) => {
-                var name = "<span class='name'>" + data.Username + "</span>";
-                var msg =  "<span class='msg'>" + data.msg + "</span>";
-                $("#msgList").append(name +"<br>" + msg + "<div class='block'></div>");
+        //const socket = io("http://localhost:3000/");
+        const socket = io("https://realtime-chat-application-fpt.herokuapp.com/");
+        // fail signup username
+        socket.on("server-send-failure-signup", (data) => {
+            alert("User " + data + " is not available!");
+        });
+        //Auto hide sign up bar 
+        socket.on("Register-success", () => {
+            $("#signUp").hide(500);
+        })
+        // success signup
+        socket.on("server-send-success-signup", (data) => {
+            $("#userList").html("");
+            $("#to").html("");
+            $("#to").append("<option>" +"Everyone"+ "</option>")
+            data.forEach(function(i){
+            $("#userList").append("<div class='user'>" + i.name + "</div>");
+            $("#to").append("<option>" + i.name+ "</option>");
             });
+        });
+        // server send message to other users after receive a message of an user
+        socket.on("server_send_message", (data) => {
+            var msg =  "<span class='msg'>" + data.msg + "<span class='small global'>"+"  from  "+ data.Username+"</span>" + "</span>";
+            $("#msgList").append("<br>" + msg +"<br>"+ "<div class='w-100'></div>");
+        });
+        //- user send success message
+        socket.on("send_message_success", (data) => {
+            var msg =  "<span class='msg right'>" + data.msg + "</span>";
+            $("#msgList").append("<br>" +msg+"<br>"+ "<div class='w-100'></div>");
+        })
+        // server response failure private message
+        socket.on("server-send-failure-private", (data) => {
+            alert("User " + data + " is not available!");
+        });
+        // receive private message 
+        socket.on("private", (data) => {
+            var msg ="<span class='msg'>" + data.msg +"<span class='small'>"+"  from  "+ data.Username+ " (Privately)"+"</span>" + "</span>";
+            $("#msgList").append("<br>"+ msg + "<br>" +"<div class='w-100'></div>");
+        });
+        // display private message that you sent to other user
+        socket.on("send-private-success", (data) => {
+            var msg =  "<span class='msg right'>" + data.msg + "<span class='small'>"+"  to  "+ data.rec +"</span>" + "</span>";
+            $("#msgList").append("<br>" + msg + "<br>"+"<div class='w-100'></div>");
+        });
 
-            // fail signup username
-            socket.on("server-send-failure-signup", (data) => {
-                alert("User " + data + " is not available!");
+        $(document).ready(function(){
+            $("#btnSignUp").click(() => {
+                socket.emit("client_send_username", $("#txtUser").val());
             });
-
-            //Auto hide sign up bar 
-            socket.on("Register-success", function(data){
-                $("#signUp").hide(500);
-            })
-            
-            // success signup
-            socket.on("server-send-success-signup", (data) => {
-                $("#userList").html("");
-                data.forEach(function(i){
-                $("#userList").append("<div class='user'>" + i.name + "</div>");
-                });
+            $("#btnChat").click(() => {
+                socket.emit("msg",{to:$("#to option:selected").text(), msg:$("#txtMessage").val()});
+                $("#txtMessage").val("");
             });
-
-            // server response failure private message
-            socket.on("server-send-failure-private", (data) => {
-                alert("User " + data + " is not available!");
-            });
-
-            // receive private message 
-            socket.on("private", (data) => {
-                var name = "<span class='name'>"+"From "+ data.Username +" to me "+"<span class='namePrivate'>"+" (Privately)"+"</span>"+"</span>";
-                var msg =  "<span class='msg'>" + data.msg + "</span>";
-                $("#msgList").append(name +"<br>" + msg + "<div class='block'></div>");
-            });
-
-            // display private message that you sent to other user
-            socket.on("send-private-success", (data) => {
-                var name = "<span class='name'>"+"From me to "+ data.rec +"<span class='namePrivate'>"+" (Privately)"+"</span>"+"</span>";
-                var msg =  "<span class='msg'>" + data.msg + "</span>";
-                $("#msgList").append(name +"<br>" + msg + "<div class='block'></div>");
-            });
-            
-            $(document).ready(function(){
-                $("#btnSignUp").click(() => {
-                    socket.emit("client_send_username", $("#txtUser").val());
-                });
-                $("#btnChat").click(() =>{
-                    socket.emit("client_send_message", $("#txtMessage").val());
-                    $("#txtMessage").val("");
-                });
-                $("#btn-pri").click(()=> {
-                   socket.emit("msg",{to:$("#to").val(), msg:$("#message").val()});
-                   $("#message").val("");
-                });
-            });      
+        });      

@@ -15,7 +15,7 @@ server.listen(port, () => {
 app.get("/", (req, res) => {
     res.render("index");
 });
-
+    
 let onlineUsers = [];
 
 // server listen connection
@@ -42,25 +42,28 @@ io.on("connection", (socket) => {
         socket.emit(("server-send-success-signup", onlineUsers));
     });
 
-    // client send message to 
-    socket.on("client_send_message", (data) =>{
-        io.sockets.emit("server_send_message", {Username:socket.Username, msg:data});
-    });
-
     // client send private message
     socket.on('msg', (data)=>{
-        let users = onlineUsers.map(x=> x.name);
-        if(users.indexOf(data.to) >= 0) {
-            let matchedUser = onlineUsers.find(x => {
-                if (x.name == data.to){
-                    return x;
-                }
-            })
-            socket.emit('send-private-success', {Username:socket.Username, msg:data.msg, rec: data.to});
-            socket.to(matchedUser.id).emit('private', {Username:socket.Username, msg:data.msg});
-        } else {
-            socket.emit("server-send-failure-private", data.to);
-        }
+        // if(data.msg != "") { // empty msg not allow 
+            let users = onlineUsers.map(x => x.name);
+            // let ids = onlineUsers.map(y => y.id);
+            if(data.to == 'Everyone'){
+                socket.broadcast.emit('server_send_message', {Username:socket.Username, msg:data.msg});
+                socket.emit('send_message_success', {msg:data.msg});
+                // io.sockets.emit("server_send_message", {Username:socket.Username, msg:data.msg});
+            } else if(users.indexOf(data.to) >= 0) {
+                let matchedUser = onlineUsers.find(x => {
+                    if (x.name == data.to){
+                        return x;
+                    }
+                })
+                socket.emit('send-private-success', {Username:socket.Username, msg:data.msg, rec: data.to});
+                socket.to(matchedUser.id).emit('private', {Username:socket.Username, msg:data.msg});
+            }
+            else {
+                socket.emit("server-send-failure-private", data.to);
+            }
+        // }
     })
 });
 

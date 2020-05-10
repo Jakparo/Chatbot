@@ -1,25 +1,31 @@
- body {
+body {
     font-family: Helvetica, Arial, sans-serif;
-    background: -webkit-linear-gradient(to left, #FFFFFF, #6DD5FA, #2980B9);
-    background: linear-gradient(to left, #FFFFFF, #6DD5FA, #2980B9); 
+    background: #C6FFDD;  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to left, #f7797d, #FBD786, #C6FFDD);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to left, #f7797d, #FBD786, #C6FFDD); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 }
-.self{
-    margin-right: 1rem;
+.small {
+    color: rgb(252, 7, 7);
+    font-size: 1rem;
+}
+.global {
+    color: rgb(2, 172, 2) !important;
 }
 .msg {
     color: black;
-    margin-left: 3rem;
+    margin-left: 1rem;
     align-self: center;
     padding: 0.2rem 1rem;
-    background-color: rgba(9, 170, 211, 0.836);
+    background-color: rgba(255, 255, 255, 0.88);
     border-radius: 47px 47px 47px 47px;
     -moz-border-radius: 47px 47px 47px 47px;
     -webkit-border-radius: 47px 47px 47px 47px;
+    float: left;
 }
 #msgList {
     background: rgba(44, 45, 45, 0.76);
     color: #FFFFFF;  
-    overflow: auto;
+    overflow-y: auto;
     height: 65vh;
     font-size: larger;
     -webkit-border-radius: 20px 10px 10px 0px;
@@ -28,6 +34,19 @@
     border: 2px solid black;
     font-size: 1.2rem;
 }
+#msgList::-webkit-scrollbar {
+    width: 0.5rem;
+}
+/* hide scroll bar msg list */
+#msgList::-webkit-scrollbar-track {
+    background: rgba(44, 45, 45, 0.76); 
+}
+ /* Handle */
+#msgList::-webkit-scrollbar-thumb {
+    background: rgb(255, 254, 254); 
+    border-radius: 0.5rem;
+}
+
 #h3 {
     display: flex;
     font-size: 1.5rem;
@@ -50,14 +69,22 @@
 }
 
 .name {
-    font-size: 1.4rem;
-    color: rgba(34, 210, 24, 0.83);
+    font-size: 1.2rem;
+    color: rgba(248, 248, 248, 0.83);
     font-weight: bold;
-    margin-left: 1rem;
+    float: left;
 }
 
 .namePrivate {
     color: rgba(255, 0, 0, 0.83);
     font-weight: bold;
-    margin-left: 1rem;
+}
+
+#btnChat {
+    padding: 0rem 2rem;
+}
+
+.right {
+    float: right !important;
+    margin-right: 1rem !important;
 }
