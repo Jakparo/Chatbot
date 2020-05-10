@@ -72,7 +72,7 @@ html
         });
         // display private message that you sent to other user
         socket.on("send-private-success", (data) => {
-            var msg =  "<span class='msg right'>" + data.msg + "<span class='small'>"+"  to  "+ data.rec +"</span>" + "</span>";
+            var msg =  "<span class='msg right'>" + data.msg + "<span class='small'>"+"  ~ to  "+ data.rec +"</span>" + "</span>";
             $("#msgList").append("<br>" + msg + "<br>"+"<div class='w-100'></div>");
         });
 
