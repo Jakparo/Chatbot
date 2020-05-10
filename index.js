@@ -15,7 +15,7 @@ server.listen(port, () => {
 app.get("/", (req, res) => {
     res.render("index");
 });
-    
+// array that contain online users
 let onlineUsers = [];
 
 // server listen connection
@@ -42,7 +42,7 @@ io.on("connection", (socket) => {
         socket.emit(("server-send-success-signup", onlineUsers));
     });
 
-    // client send private message
+    // client send message
     socket.on('msg', (data)=>{
         if(data.msg != "") { // empty msg not allow 
             let users = onlineUsers.map(x => x.name);
