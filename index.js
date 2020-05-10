@@ -44,13 +44,11 @@ io.on("connection", (socket) => {
 
     // client send private message
     socket.on('msg', (data)=>{
-        // if(data.msg != "") { // empty msg not allow 
+        if(data.msg != "") { // empty msg not allow 
             let users = onlineUsers.map(x => x.name);
-            // let ids = onlineUsers.map(y => y.id);
             if(data.to == 'Everyone'){
                 socket.broadcast.emit('server_send_message', {Username:socket.Username, msg:data.msg});
                 socket.emit('send_message_success', {msg:data.msg});
-                // io.sockets.emit("server_send_message", {Username:socket.Username, msg:data.msg});
             } else if(users.indexOf(data.to) >= 0) {
                 let matchedUser = onlineUsers.find(x => {
                     if (x.name == data.to){
@@ -63,7 +61,7 @@ io.on("connection", (socket) => {
             else {
                 socket.emit("server-send-failure-private", data.to);
             }
-        // }
+        }
     })
 });
 
