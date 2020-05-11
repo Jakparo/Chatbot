@@ -31,8 +31,8 @@ html
                             button#btnChat.btn.btn-primary(type='submit')
                                 i.fas.fa-paper-plane 
     script.
-        //const socket = io("http://localhost:3000/");
-        const socket = io("https://realtime-chat-application-fpt.herokuapp.com/");
+        const socket = io("http://localhost:3000/");
+        //- const socket = io("https://realtime-chat-application-fpt.herokuapp.com/");
         // fail signup username
         socket.on("server-send-failure-signup", (data) => {
             alert("User " + data + " is not available!");
