@@ -31,8 +31,8 @@ html
                             button#btnChat.btn.btn-primary(type='submit')
                                 i.fas.fa-paper-plane 
     script.
-        const socket = io("http://localhost:3000/");
-        //- const socket = io("https://realtime-chat-application-fpt.herokuapp.com/");
+        //- const socket = io("http://localhost:3000/");
+        const socket = io("https://realtime-chat-application-fpt.herokuapp.com/");
         // fail signup username
         socket.on("server-send-failure-signup", (data) => {
             alert("User " + data + " is not available!");
@@ -54,12 +54,12 @@ html
         // server send message to other users after receive a message of an user
         socket.on("server_send_message", (data) => {
             var msg =  "<span class='msg'>" + data.msg + "<span class='small global'>"+"  from  "+ data.Username+"</span>" + "</span>";
-            $("#msgList").append("<br>" + msg +"<br>"+ "<div class='w-100'></div>");
+            $("#msgList").append("<br>" + msg +"<br>");
         });
         //- user send success message
         socket.on("send_message_success", (data) => {
             var msg =  "<span class='msg right'>" + data.msg + "</span>";
-            $("#msgList").append("<br>" +msg+"<br>"+ "<div class='w-100'></div>");
+            $("#msgList").append("<br>" +msg+"<br>");
         })
         // server response failure private message
         socket.on("server-send-failure-private", (data) => {
@@ -68,12 +68,12 @@ html
         // receive private message 
         socket.on("private", (data) => {
             var msg ="<span class='msg'>" + data.msg +"<span class='small'>"+"  from  "+ data.Username+ " (Privately)"+"</span>" + "</span>";
-            $("#msgList").append("<br>"+ msg + "<br>" +"<div class='w-100'></div>");
+            $("#msgList").append("<br>"+ msg + "<br>");
         });
         // display private message that you sent to other user
         socket.on("send-private-success", (data) => {
             var msg =  "<span class='msg right'>" + data.msg + "<span class='small'>"+"  ~ to  "+ data.rec +"</span>" + "</span>";
-            $("#msgList").append("<br>" + msg + "<br>"+"<div class='w-100'></div>");
+            $("#msgList").append("<br>" + msg + "<br>");
         });
 
         $(document).ready(function(){
