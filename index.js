@@ -1,13 +1,14 @@
 var express = require("express");
 var app = express();
+var port = process.env.PORT || 3000;
+var server = require("http").Server(app);
+var io = require("socket.io")(server);
 
 app.use(express.static("public"));
 
 app.set("view engine", "pug");
 app.set("views", "./views");
-var port = process.env.PORT || 3000;
-var server = require("http").Server(app);
-var io = require("socket.io")(server);
+
 server.listen(port, () => {
     console.log("Server is available now")
 });
@@ -24,10 +25,10 @@ io.on("connection", (socket) => {
     socket.on("client_send_username", (data) => {
         console.log(`${socket.id} sign up username: ${data}`);
         users = onlineUsers.map(x => x.name)
-        if( users.indexOf(data) >= 0) {
+        if( users.indexOf(data) >= 0 || data === "") { // check if username that user sign up is duplicate or empty
             socket.emit("server-send-failure-signup", data);
             console.log('Sign up fail')
-        } else {
+        } else { // sign up success
             onlineUsers.push({name: data, id: socket.id});
             socket.Username = data;
             socket.emit("Register-success", data);
@@ -46,10 +47,10 @@ io.on("connection", (socket) => {
     socket.on('msg', (data)=>{
         if(data.msg != "") { // empty msg not allow 
             let users = onlineUsers.map(x => x.name);
-            if(data.to == 'Everyone'){
+            if(data.to == 'Everyone'){ // send message to all users
                 socket.broadcast.emit('server_send_message', {Username:socket.Username, msg:data.msg});
                 socket.emit('send_message_success', {msg:data.msg});
-            } else if(users.indexOf(data.to) >= 0) {
+            } else if(users.indexOf(data.to) >= 0) { // send private message to assign user
                 let matchedUser = onlineUsers.find(x => {
                     if (x.name == data.to){
                         return x;
@@ -64,4 +65,3 @@ io.on("connection", (socket) => {
         }
     })
 });
-
